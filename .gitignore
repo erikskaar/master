@@ -15,6 +15,7 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+DPSD-tree/untitled/converted_shortened.csv
 
 ### Eclipse ###
 .apt_generated
