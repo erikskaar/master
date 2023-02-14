@@ -29,7 +29,7 @@ class ChartView : View() {
         stackpane {
             group {
                 trajectories.forEachIndexed { i, trajectory ->
-                    if (i in 0..100) {
+                    if (i > -1) {
                         val color = c(Math.random(), Math.random(), Math.random())
                         polyline(points = getRectanglePoints(trajectory.getBoundingRectangle())) {
                             stroke = c(color.toString(), opacity = 0.2)

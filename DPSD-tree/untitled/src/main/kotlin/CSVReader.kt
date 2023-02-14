@@ -24,7 +24,7 @@ object CSVReader {
                             trajectoryId = it.get("TRIP_ID")!!
                         )
                     )
-                    if (lineCounter > 5000) return@loop
+                    if (lineCounter > 50000) return@loop
                 }
             }
         }

@@ -91,14 +91,14 @@ class Trajectory(private val nodes: ArrayList<DataNode>, private val id: String)
         setBoundingRectangles()
         boundingRectangle = BoundingRectangle(
             northWest = Point(
-                splits.map { split -> split.map { node -> node.getBoundingRectangle().northWest.x }.minOf { it } }
+                splits.map { split -> split.minOf { node -> node.getBoundingRectangle().northWest.x } }
                     .minOf { it },
-                splits.map { split -> split.map { node -> node.getBoundingRectangle().northWest.y }.maxOf { it } }
+                splits.map { split -> split.maxOf { node -> node.getBoundingRectangle().northWest.y } }
                     .maxOf { it },
             ), southEast = Point(
-                splits.map { split -> split.map { node -> node.getBoundingRectangle().southEast.x }.maxOf { it } }
+                splits.map { split -> split.maxOf { node -> node.getBoundingRectangle().southEast.x } }
                     .maxOf { it },
-                splits.map { split -> split.map { node -> node.getBoundingRectangle().southEast.y }.minOf { it } }
+                splits.map { split -> split.minOf { node -> node.getBoundingRectangle().southEast.y } }
                     .minOf { it },
             )
         )
