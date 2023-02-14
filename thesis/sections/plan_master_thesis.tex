@@ -1,0 +1,49 @@
+\chapter{Plan for Master's Thesis}
+This chapter aims to provide a pointer for how we are planning to conduct the work for the Master's Thesis. Everything is subject to change, but this will work as a baseline to help to know where to begin.
+\section{Research and Report Writing}
+\subsection{Research}
+More research beyond what is contained in this project is needed. There is still more knowledge to be gained on the subject of spatial data structures. Expanding linked lists may not be the silver bullet to querying linked directional spatial data and that there are more improvements to be done. Looking at more spatial data structures and seeing what makes them good can help find inspiration for further improvements. \\
+
+The two weeks allocated to research before starting implementing might easily turn into three or four weeks if not paying attention and staying on schedule. Setting a hard limit on two weeks for initial research (from the first day of research) will help not lock into over-researching, causing a delay in other parts of the process. If there is going to be more research done it should be conducted in week 5 and outwards. This will allow for trying out the data structure early on, making sure that it is possible go back and improve it before writing too much on the thesis. Spending too much time researching before implementing the method might result in having to double up on research as there is probably something that will need to be changed with the data structure. \\
+
+During the report writing there will be more research conducted as well, especially on the background section, making sure that everything that is written is correct.
+\subsection{Report Writing}
+Most of the time during this thesis is going to be spent writing the report. Being as efficient as possible when writing is going to speed up the process quite a lot seeing that this is the part that is going to take the most time. To hit the ground running from the very start there has been prepared a \LaTeX-template from this project that will be usable from the very start. One idea would be to create the skeleton or structure of the thesis before next semester as well, as that would help outline what the different parts from the very start. \\
+
+Throughout the work done on this project it has been proven that working early in the morning is not effective. Doing activities in the morning can help alleviate this as one will not be as restless when writing. Because of this, the plan is to start the day early, making sure that enough activity and exercise is performed before the writing starts. \\
+
+It has also shown that beginning to write without having a plan can cause large portions of the text to be rewritten later on. This is not very effective, especially if noticed early enough before having spent a long time writing something irrelevant. Because of this, all sections should be outlined with bullet points before any writing is done. In addition, making sure that another set of eyes is involved throughout the entire process will make sure that the report does not step outside its boundaries or scope. By preparing something along a "Status, Problem, Plan" at a set interval one can more easily know what to get feedback on. This will be utilized for checking in with the supervisor to ensure that the project is going along nicely.
+
+\section{Implementation}
+To produce the results, the data structure will have to be programmed, as well as an already proven data structures to compare it to. This will be what the entire thesis revolves around. If the data structure turns out the be inefficient, a week has been allocated to look at the results, and improve it based on those. This can be seen under week 5 in table \ref{tab:plan}. If it still is not performing as intended the plan will continue as usual, not differing from if the results are positive.
+
+\subsection{Programming Language}
+The choice of programming language is something to consider at a later date. It is not present in the table as it is not presumed to take a significant amount of time to research thoroughly enough to make an informed decision. Some key factors to consider are:
+\begin{itemize}
+	\item \textbf{Programming speed} \\ The more efficient one is with a language, the faster the implementation stage is going to go. Having to learn an entirely new language is a barrier that might cause a large setback and that is not a preferable outcome.
+	\item \textbf{Ease of visualization} \\ To show the results in the thesis, the language should have good support for visualizing the results of the benchmarks. Now, most languages have extensive visualization libraries, so this likely will not be a huge factor.
+	\item \textbf{Benchmarking} \\ Benchmarking the different algorithms is going to be key for this thesis to be written. Again, most languages probably have a benchmarking feature or library, but there will be differences and being able to see both time and memory statistics would be key for analyzing the results.
+	\item \textbf{Libraries} \\ Libraries can help speed up the programming process by being able to re-use code that other people have already written. If there is a good open source R-tree implementation already written, it could save many hours trying to implement it by hand. However, there is always the risk that the libraries can impact the comparisons. For instance, if one is using Python and using the R-tree library, nothing written in pure Python would come close as that library uses C under the hood, making it way faster. Libraries are also prone to having implementation errors that could affect performance or outcome. Making sure that the libraries implement the control data structures properly is going to be key to making sure that the comparisons are as fair as possible.
+\end{itemize}
+
+\section{Action Plan}
+An action plan has been written for the work on the thesis. It can be seen in table \ref{tab:plan}. January, even after the 13th, can be hectic due to personal reasons, but even if the plan is set back two weeks it should still be within a good margin of the time limit. As when working on any plan not everything is going to go as smooth as outlined. Being aware of this will allow for using the plan as more of a baseline that can be continously updated to keep track of the work, whilst also making sure that every aspect of the project is taken into account.
+
+\begin{table}
+	\centering
+	\caption{Action plan for the Master's Thesis.}
+	\label{tab:plan}
+	\begin{tabularx}{\textwidth}{|X|X|X|X|} \hline
+		\multicolumn{1}{|X|}{\textbf{Week}} & \multicolumn{1}{X|}{\textbf{Focus}} & \multicolumn{1}{X|}{\textbf{Goal}} & \multicolumn{1}{X|}{\textbf{Initial Dates}}\\ \hline
+		1 & Research & Comprehensive list of spatial data structures and their properties & 13.01.2023 - 20.01.2023 \\ \hline
+		2 & Research & Potential improvements to linked MBR lists & 21.01.2023 - 28.01.2023 \\ \hline
+		3,4 & Programming & Implementation of linked MBR lists and comparison data structures & 29.01.2023 - 12.02.2023 \\ \hline
+		5 & Research and programming & Look at results, find improvements & 13.02.2023 - 20.02.2023 \\ \hline
+		6,7 & Report writing & Write background & 21.02.2023 - 08.03.2023 \\ \hline
+		8 & Report writing & Write method & 09.03.2023 - 16.03.2023 \\ \hline
+		9 & Report writing & Write results & 17.03.2023 - 24.03.2023 \\ \hline
+		10 & Report writing & Write introduction & 25.03.2023 - 01.04.2023 \\ \hline
+		11 & Report writing & Write conclusion & 02.03.2023 - 09.04.2023 \\ \hline
+		12 and beyond & Report writing & Improve on feedback & 10.03.2023 - 10.06.2023 \\ \hline
+	\end{tabularx}
+\end{table}

@@ -1,0 +1,4 @@
+package rtree
+
+class PointList {
+}

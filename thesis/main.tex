@@ -1,0 +1,34 @@
+\documentclass[12pt]{report}
+\author{Erik Mjaaland Skår}
+
+\usepackage{url, graphicx, subfiles, csquotes, tabularx, xltabular, svg, algorithm, algpseudocode, comment}
+\usepackage[authoryear, square]{natbib}
+\usepackage[Lenny]{fncychap}
+
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\setcounter{secnumdepth}{3}
+\title{Utilizing the Linked Directional Properties of Trajectories in Querying Spatial Data}
+\bibliographystyle{ieeetr}
+\begin{document}
+\pagenumbering{roman}
+\maketitle
+\newpage
+\begin{abstract}
+	insert abstract
+\end{abstract}
+\newpage
+\tableofcontents
+\listoffigures
+\listoftables
+\cleardoublepage
+\pagenumbering{arabic}
+\include{sections/introduction.tex}
+\newpage
+\include{sections/background.tex}
+\newpage
+\include{sections/plan_master_thesis.tex}
+
+\newpage
+\bibliography{main.bib}
+\end{document}

@@ -1,0 +1,25 @@
+PostgreSQL {
+  Node {
+    shape: sql_table
+      id: int {constraint: primary_key}
+      trajectory_id: varchar {constraint: foreign_key}
+      location: point
+      child_id: int {constraint: foreign_key}
+      parent_id: int {constraint: foreign_key}
+  }
+
+  Relationship {
+    shape: sql_table
+    parent_id: int {constraint: foreign_key}
+    child_id: int {constraint: foreign_key}
+  }
+
+  Trajectory {
+  shape: sql_table
+    id: int {constraint: primary_key}
+  }
+
+  Node.trajectory_id -> Trajectory.id: "is part of"
+  Node.child_id -> Relationship.child_id: "has child"
+  Node.parent_id -> Relationship.parent_id: "has parent"
+}
