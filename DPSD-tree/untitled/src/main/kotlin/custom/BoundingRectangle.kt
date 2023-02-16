@@ -1,3 +1,6 @@
+package custom
+
+import Point
 import kotlin.math.abs
 
 data class BoundingRectangle(val northWest: Point, val southEast: Point) {

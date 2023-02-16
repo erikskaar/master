@@ -1,3 +1,7 @@
+package custom
+
+import Point
+
 class Trajectory(private val nodes: ArrayList<DataNode>, private val id: String) {
     private var isSplit: Boolean = false
     private val splits: ArrayList<ArrayList<DataNode>> = arrayListOf(nodes)
@@ -89,19 +93,13 @@ class Trajectory(private val nodes: ArrayList<DataNode>, private val id: String)
         splits.add(secondSplit as ArrayList<DataNode>)
         setParentsAndChildren()
         setBoundingRectangles()
-        boundingRectangle = BoundingRectangle(
-            northWest = Point(
-                splits.map { split -> split.minOf { node -> node.getBoundingRectangle().northWest.x } }
-                    .minOf { it },
-                splits.map { split -> split.maxOf { node -> node.getBoundingRectangle().northWest.y } }
-                    .maxOf { it },
-            ), southEast = Point(
-                splits.map { split -> split.maxOf { node -> node.getBoundingRectangle().southEast.x } }
-                    .maxOf { it },
-                splits.map { split -> split.minOf { node -> node.getBoundingRectangle().southEast.y } }
-                    .minOf { it },
+        boundingRectangle =
+            BoundingRectangle(
+                northWest = Point(splits.minOf { split -> split.minOf { node -> node.getBoundingRectangle().northWest.x } },
+                    splits.maxOf { split -> split.maxOf { node -> node.getBoundingRectangle().northWest.y } }),
+                southEast = Point(splits.maxOf { split -> split.maxOf { node -> node.getBoundingRectangle().southEast.x } },
+                    splits.minOf { split -> split.minOf { node -> node.getBoundingRectangle().southEast.y } })
             )
-        )
         isSplit = true
     }
 

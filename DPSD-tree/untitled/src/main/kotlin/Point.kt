@@ -1,5 +1,5 @@
 data class Point(val x: Double, val y: Double) {
-    fun isDominatedByNorthWest(point: Point): Boolean {
-        return x > point.x && y < point.y
+    override fun toString(): String {
+        return "($x, $y)"
     }
 }

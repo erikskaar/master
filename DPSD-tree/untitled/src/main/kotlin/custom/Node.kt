@@ -1,3 +1,5 @@
+package custom
+
 import java.util.*
 
 interface Node {

@@ -1,41 +1,66 @@
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import custom.DataNode
+import custom.Trajectory
+import rTree.PointNode
 import java.io.File
 
 object CSVReader {
-    fun readCSV(file: String): ArrayList<DataNode> {
+    fun readCSV(file: String, type: String): Any {
         val f = File(file)
         val dataNodes = arrayListOf<DataNode>()
+        val pointNodes = arrayListOf<PointNode>()
         var counter = 0
         var lineCounter = 0
+        val MAX_LINES = 20
         csvReader().open(f) {
             println("Reading file")
             val fileSizePercent = f.readLines().size / 99
             run loop@{
                 readAllWithHeaderAsSequence().forEachIndexed { index, it ->
                     lineCounter++
+                    if (lineCounter > MAX_LINES) return@loop
                     if (index % fileSizePercent == 0) {
                         counter++
-                        println("$counter%")
+                        println("$counter% of CSV parsed")
                     }
-                    dataNodes.add(
-                        DataNode(
-                            x = it.get("LATITUDE")!!.toDouble(),
-                            y = it.get("LONGITUDE")!!.toDouble(),
-                            trajectoryId = it.get("TRIP_ID")!!
-                        )
-                    )
-                    if (lineCounter > 50000) return@loop
+                    when (type) {
+                        "custom" -> {
+                            dataNodes.add(
+                                DataNode(
+                                    x = it["LATITUDE"]!!.toDouble(),
+                                    y = it["LONGITUDE"]!!.toDouble(),
+                                    trajectoryId = it["TRIP_ID"]!!
+                                )
+                            )
+                        }
+                        "rTree" -> {
+                            pointNodes.add(
+                                PointNode(
+                                    coordinates = Point(
+                                        x = it["LATITUDE"]!!.toDouble(),
+                                        y = it["LONGITUDE"]!!.toDouble()
+                                    ),
+                                    trajectoryId = it["TRIP_ID"]!!
+                                )
+                            )
+                        }
+                        else -> return@open
+                    }
+
                 }
             }
         }
-        println("Nodes created")
-        return dataNodes
+        return when (type) {
+            "custom" -> addDataNodesToTrajectories(dataNodes)
+            "rTree" -> pointNodes
+            else -> arrayListOf("")
+        }
     }
 
-    fun addNodesToTrajectories(dataNodes: ArrayList<DataNode>): ArrayList<Trajectory> {
+
+    private fun addDataNodesToTrajectories(dataNodes: ArrayList<DataNode>): ArrayList<Trajectory> {
 
         val trajectories = arrayListOf<Trajectory>()
-
         var previousTrajectoryId = ""
         var previousTrajectory: Trajectory? = null
 

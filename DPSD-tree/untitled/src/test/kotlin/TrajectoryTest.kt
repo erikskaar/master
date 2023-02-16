@@ -1,3 +1,6 @@
+import custom.BoundingRectangle
+import custom.DataNode
+import custom.Trajectory
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.test.BeforeTest

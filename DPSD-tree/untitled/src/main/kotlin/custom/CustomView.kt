@@ -1,9 +1,12 @@
+import custom.BoundingRectangle
+import custom.CustomViewController
+import custom.Trajectory
 import javafx.collections.ObservableList
 import tornadofx.*
 
-class ChartView : View() {
+class CustomView : View() {
     private val MULTIPLIER = 5000
-    private val controller: ViewController by inject()
+    private val controller: CustomViewController by inject()
     private val trajectories: ObservableList<Trajectory> = controller.values
 
     private fun getRectanglePoints(rectangle: BoundingRectangle): Array<Number> {
@@ -29,7 +32,7 @@ class ChartView : View() {
         stackpane {
             group {
                 trajectories.forEachIndexed { i, trajectory ->
-                    if (i > -1) {
+                    if (i < 7) {
                         val color = c(Math.random(), Math.random(), Math.random())
                         polyline(points = getRectanglePoints(trajectory.getBoundingRectangle())) {
                             stroke = c(color.toString(), opacity = 0.2)
@@ -66,7 +69,11 @@ class Styles : Stylesheet() {
         Companion.label {
             fontFamily = "serif"
         }
+        Companion.root {
+            padding = box(20.px)
+            fontFamily = "serif"
+        }
     }
 }
 
-class ChartViewApp : App(ChartView::class, Styles::class)
+class CustomViewApp : App(CustomView::class, Styles::class)
