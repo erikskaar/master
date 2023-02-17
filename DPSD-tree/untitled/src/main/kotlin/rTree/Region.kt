@@ -3,7 +3,6 @@ package rTree
 import Point
 import Utils
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.floor
 
@@ -13,7 +12,7 @@ class Region(
     var parent: Region? = null,
     private val maxFill: Int = 9,
     private val depth: Int = 0,
-    val tree: Tree? = parent?.tree
+    private val tree: Tree
 ) {
     private val FANOUT = 4
     private val minFill = floor(maxFill * 0.4)
@@ -33,6 +32,8 @@ class Region(
 
     fun getIsLeaf() = isLeaf
 
+
+/*
     fun balance() {
         if (isLeaf) return
         if (subRegions.all { !it.isLeaf }) return
@@ -127,6 +128,38 @@ class Region(
         }
         updateRegionSize()
         balance()
+    }
+
+ */
+
+    fun shouldSplit(): Boolean {
+        if (isLeaf) return points.size > maxFill
+        return subRegions.size > FANOUT
+    }
+
+
+    // Write a split function that
+    // 1. Splits the region into two regions
+    // 2. Adds the two regions to the tree
+    // 3. Adds the two regions to the parent region
+    // 4. Removes the current region from the parent region
+    // 5. Removes the current region from the tree
+    // 6. If the current region is the root, create a new root region and add the two regions to it
+    // 7. If the current region is not the root, call split on the parent region
+
+
+
+
+    fun addPoint(point: PointNode) {
+        println(tree.regions.size)
+        if (isLeaf) {
+            points.add(point)
+        } else {
+            val smallestIncreaseRegion = getRegionWithSmallestAreaIncreaseRequired(point.getPoint())
+            smallestIncreaseRegion?.addPoint(point)
+        }
+        tree.regions.forEach { it.updateRegionSize() }
+        split()
     }
 
     private fun getAreaIncreaseRequired(point: Point): Double {

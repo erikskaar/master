@@ -30,7 +30,7 @@ class RTreeView : View() {
                         }
                     }
                 }
-                tree.getAllRegions().forEach {
+                tree.regions.forEach {
                     val color: Color = if (it.getDirectSubRegions().isEmpty()) {
                         c(1.0, 0.0, 0.0)
                     } else {
