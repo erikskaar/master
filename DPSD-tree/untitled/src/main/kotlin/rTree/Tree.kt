@@ -7,14 +7,29 @@ class Tree(private val points: ArrayList<PointNode>) {
 
     private val northWest = Utils.getNorthWestAndSouthEast(points.map { it.getPoint() } as ArrayList<Point>).first
     private val southEast = Utils.getNorthWestAndSouthEast(points.map { it.getPoint() } as ArrayList<Point>).second
+    private val rootRegions = arrayListOf<Region>()
 
-    var root = Region(northWest, southEast, maxFill = 9, tree = this)
+    fun updateRootRegions(vararg regions: Region) {
+        rootRegions.clear()
+        rootRegions.addAll(regions)
 
-    val regions = arrayListOf(root)
+        if (rootRegions.size > 1) {
+            val (newNorthWest, newSouthEast) = Utils.getNorthWestAndSouthEastOfRegionsWithoutPoints(rootRegions)
+            val newRegion = Region(newNorthWest, newSouthEast, tree = this, isRoot = true)
+            rootRegions.forEach {  newRegion.addSubRegion(it) }
+            rootRegions.clear()
+            rootRegions.add(newRegion)
+        }
+        root = rootRegions.first()
+        root.updateRegionSize()
+    }
+
+    var root = Region(northWest, southEast, maxFill = 9, tree = this, isRoot = true)
 
     private fun buildTree() {
+        updateRootRegions(regions = arrayOf(root))
         points.forEach {
-            root.addPoint(it)
+            root.insert(it)
         }
         println("points: ${getAllPoints().size}")
     }
@@ -24,8 +39,6 @@ class Tree(private val points: ArrayList<PointNode>) {
     fun getAllRegions(): ArrayList<Region> {
         return root.getAllSubRegions(arrayListOf(root))
     }
-
-    fun getMaxDepth(): Int = 3
 
     init {
         buildTree()

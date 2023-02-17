@@ -11,9 +11,15 @@ object Utils {
         )
     }
 
-    fun getNorthWestAndSouthEastOfRegions(regions: ArrayList<Region>): Pair<Point, Point> {
+    fun getNorthWestAndSouthEastOfRegionsWithPoints(regions: ArrayList<Region>): Pair<Point, Point> {
         val points = regions.flatMap { it.getPoints().map { node ->  node.getPoint() } }
         return getNorthWestAndSouthEast(points as ArrayList<Point>)
+    }
+
+    fun getNorthWestAndSouthEastOfRegionsWithoutPoints(regions: ArrayList<Region>): Pair<Point, Point> {
+        val northWest = Point(regions.minOf { it.northWest.x }, regions.maxOf { it.northWest.y })
+        val southEast = Point(regions.maxOf { it.southEast.x }, regions.minOf { it.southEast.y })
+        return Pair(northWest, southEast)
     }
 
     fun getRectanglePointsForRegion(region: Region, multiplier: Int): Array<Number> {
@@ -50,6 +56,4 @@ object Utils {
         }
         return highestDistancePair
     }
-
-    fun getMaxDepth(tree: Tree?): Int = tree?.getMaxDepth() ?: 3
 }

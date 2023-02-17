@@ -11,155 +11,125 @@ class Region(
     var southEast: Point,
     var parent: Region? = null,
     private val maxFill: Int = 9,
-    private val depth: Int = 0,
-    private val tree: Tree
+    private val tree: Tree,
+    private val isRoot: Boolean = false
 ) {
     private val FANOUT = 4
     private val minFill = floor(maxFill * 0.4)
-    private val id = UUID.randomUUID()
 
     private val subRegions: ArrayList<Region> = arrayListOf()
     private var points: ArrayList<PointNode> = arrayListOf()
-    private var isLeaf = true
 
-    fun getDepth(): Int {
-        return depth
+    fun getIsLeaf(): Boolean {
+        return subRegions.size == 0
     }
 
-    private fun setIsLeaf(new: Boolean) {
-        isLeaf = new
-    }
+    fun getIsRoot() = isRoot
 
-    fun getIsLeaf() = isLeaf
-
-
-/*
-    fun balance() {
-        if (isLeaf) return
-        if (subRegions.all { !it.isLeaf }) return
-        if (subRegions.all { it.isLeaf }) return
-
-        val leaves = subRegions.filter { it.isLeaf } as ArrayList<Region>
-        val pair = Utils.getNorthWestAndSouthEastOfRegions(leaves)
-
-        val newRegion = Region(pair.first, pair.second, depth = depth + 1)
-
-        subRegions.removeAll(leaves.toSet())
-        leaves.forEach { newRegion.addSubRegion(it) }
-        addSubRegion(newRegion)
-        newRegion.updateRegionSize()
-        updateRegionSize()
-        parent?.balance()
-    }
-
-    private fun splitRegionAtSameLevel() {
-        val maxDistancePoints = Utils.getPointsWithHighestDistance(points)
-        if (hasParent() && parent?.getDirectSubRegions()?.size!! < FANOUT) {
-            val newRegion =
-                Region(maxDistancePoints.second.getPoint(), maxDistancePoints.second.getPoint(), depth = depth + 1)
-            newRegion.addPointDirectly(maxDistancePoints.second)
-            points.remove(maxDistancePoints.second)
-            points.remove(maxDistancePoints.first)
-            var tempRegion: Region? = Region(maxDistancePoints.first.getPoint(), maxDistancePoints.first.getPoint())
-            tempRegion?.addPointDirectly(maxDistancePoints.first)
-
-            points.forEach {
-                val minimumAreaIncreaseOld = tempRegion?.getAreaIncreaseRequired(it.getPoint())
-                val minimumAreaIncreaseNew = newRegion.getAreaIncreaseRequired(it.getPoint())
-                if (minimumAreaIncreaseOld!! <= minimumAreaIncreaseNew) {
-                    tempRegion?.addPointDirectly(it)
-                } else {
-                    newRegion.addPointDirectly(it)
-                }
-            }
-            points = tempRegion?.getPoints()!!
-            tempRegion = null
-
-            while (getPoints().size < minFill) {
-                var smallestAreaIncrease = Double.MAX_VALUE
-                var smallestAreaIncreaseNode: PointNode? = null
-                newRegion.getPoints().forEach {
-                    val currentSmallestIncrease = getAreaIncreaseRequired(it.getPoint())
-                    if (currentSmallestIncrease < smallestAreaIncrease) {
-                        smallestAreaIncreaseNode = it
-                        smallestAreaIncrease = currentSmallestIncrease
-                    }
-                }
-                if (smallestAreaIncreaseNode !== null) {
-                    addPointDirectly(smallestAreaIncreaseNode!!)
-                    newRegion.points.remove(smallestAreaIncreaseNode)
-                }
-            }
-            while (newRegion.getPoints().size < minFill) {
-                var smallestAreaIncrease = Double.MAX_VALUE
-                var smallestAreaIncreaseNode: PointNode? = null
-                getPoints().forEach {
-                    val currentSmallestIncrease = newRegion.getAreaIncreaseRequired(it.getPoint())
-                    if (currentSmallestIncrease < smallestAreaIncrease) {
-                        smallestAreaIncreaseNode = it
-                        smallestAreaIncrease = currentSmallestIncrease
-                    }
-                }
-                if (smallestAreaIncreaseNode !== null) {
-                    newRegion.addPointDirectly(smallestAreaIncreaseNode!!)
-                    points.remove(smallestAreaIncreaseNode)
-                }
-            }
-            addSideRegion(newRegion)
-            newRegion.updateRegionSize()
-            updateRegionSize()
-        } else {
-            val newRegion = Region(northWest, southEast)
-            setIsLeaf(false)
-            addSubRegion(newRegion)
-            points.forEach { newRegion.addPoint(it) }
-            points.clear()
-        }
-    }
-
-    fun addPoint(point: PointNode) {
-        if (isLeaf) {
+    fun insert(point: PointNode) {
+        if (getIsLeaf()) {
             points.add(point)
             if (points.size > maxFill) {
-                splitRegionAtSameLevel()
+                split()
             }
         } else {
-            getRegionWithSmallestAreaIncreaseRequired(point.getPoint())?.addPoint(point) ?: println("no subregions")
+            val region = getRegionWithSmallestAreaIncreaseRequired(point.getPoint())
+            region?.insert(point)
         }
         updateRegionSize()
-        balance()
     }
-
- */
 
     fun shouldSplit(): Boolean {
-        if (isLeaf) return points.size > maxFill
-        return subRegions.size > FANOUT
+        return when (getIsLeaf()) {
+            true -> {
+                points.size > maxFill
+            }
+            false -> {
+                (subRegions.size > FANOUT)
+            }
+        }
     }
 
+    fun splitNonLeafWithParent(
+        left: ArrayList<Region>,
+        right: ArrayList<Region>,
+        leftRegion: Region,
+        rightRegion: Region
+    ) {
+        left.forEach { leftRegion.addSubRegion(it) }
+        leftRegion.updateRegionSize()
+        right.forEach { rightRegion.addSubRegion(it) }
+        rightRegion.updateRegionSize()
+        parent?.addSubRegion(leftRegion)
+        parent?.addSubRegion(rightRegion)
+        parent?.removeSubRegion(this)
+        parent?.split()
+    }
 
-    // Write a split function that
-    // 1. Splits the region into two regions
-    // 2. Adds the two regions to the tree
-    // 3. Adds the two regions to the parent region
-    // 4. Removes the current region from the parent region
-    // 5. Removes the current region from the tree
-    // 6. If the current region is the root, create a new root region and add the two regions to it
-    // 7. If the current region is not the root, call split on the parent region
+    fun splitNonLeafRoot(left: ArrayList<Region>, right: ArrayList<Region>, leftRegion: Region, rightRegion: Region) {
+        left.forEach { leftRegion.addSubRegion(it) }
+        leftRegion.updateRegionSize()
+        right.forEach { rightRegion.addSubRegion(it) }
+        rightRegion.updateRegionSize()
+        tree.updateRootRegions(leftRegion, rightRegion)
+    }
 
-
-
-
-    fun addPoint(point: PointNode) {
-        println(tree.regions.size)
-        if (isLeaf) {
-            points.add(point)
-        } else {
-            val smallestIncreaseRegion = getRegionWithSmallestAreaIncreaseRequired(point.getPoint())
-            smallestIncreaseRegion?.addPoint(point)
+    fun split() {
+        if (!shouldSplit()) return
+        when (getIsLeaf()) {
+            false -> {
+                subRegions.sortBy { it.getEpicenter().x }
+                val median = subRegions.size / 2 + 1
+                val left = subRegions.subList(0, median).toMutableList() as ArrayList<Region>
+                val right = subRegions.subList(median, subRegions.size).toMutableList() as ArrayList<Region>
+                val (leftNorthWest, leftSouthEast) = Utils.getNorthWestAndSouthEastOfRegionsWithoutPoints(left)
+                val leftRegion = Region(leftNorthWest, leftSouthEast, tree = tree)
+                val (rightNorthWest, rightSouthEast) = Utils.getNorthWestAndSouthEastOfRegionsWithoutPoints(right)
+                val rightRegion = Region(rightNorthWest, rightSouthEast, tree = tree)
+                if (hasParent()) {
+                    splitNonLeafWithParent(left, right, leftRegion, rightRegion)
+                } else {
+                    splitNonLeafRoot(left, right, leftRegion, rightRegion)
+                }
+            }
+            true -> {
+                val pair = Utils.getPointsWithHighestDistance(points)
+                val left = pair.first
+                val right = pair.second
+                val leftRegion = Region(left.getPoint(), left.getPoint(), tree = tree)
+                val rightRegion = Region(right.getPoint(), right.getPoint(), tree = tree)
+                leftRegion.addPointDirectly(left)
+                rightRegion.addPointDirectly(right)
+                points.remove(left)
+                points.remove(right)
+                val pointsCounter = 0
+                points.forEach {
+                    if (leftRegion.getPoints().size < minFill && (points.size - pointsCounter > minFill - leftRegion.getPoints().size)) {
+                        leftRegion.addPointDirectly(it)
+                        return@forEach
+                    } else if (rightRegion.getPoints().size < minFill && (points.size - pointsCounter > minFill - rightRegion.getPoints().size)) {
+                        rightRegion.addPointDirectly(it)
+                        return@forEach
+                    }
+                    if (leftRegion.getAreaIncreaseRequired(it.getPoint()) < rightRegion.getAreaIncreaseRequired(it.getPoint())) {
+                        leftRegion.addPointDirectly(it)
+                    } else {
+                        rightRegion.addPointDirectly(it)
+                    }
+                    leftRegion.updateRegionSize()
+                    rightRegion.updateRegionSize()
+                }
+                points.clear()
+                if (hasParent()) {
+                    parent?.addSubRegion(leftRegion)
+                    parent?.addSubRegion(rightRegion)
+                    parent?.removeSubRegion(this)
+                    parent?.split()
+                } else {
+                    tree.updateRootRegions(leftRegion, rightRegion)
+                }
+            }
         }
-        tree.regions.forEach { it.updateRegionSize() }
-        split()
     }
 
     private fun getAreaIncreaseRequired(point: Point): Double {
@@ -186,6 +156,7 @@ class Region(
 
     private fun getRegionWithSmallestAreaIncreaseRequired(point: Point): Region? {
         if (subRegions.isEmpty()) return null
+        if (subRegions.any { it.doesCoverPoint(point) }) return subRegions.find { it.doesCoverPoint(point) }
         var result = subRegions.first()
         var smallestAreaIncrease = Double.MAX_VALUE
         subRegions.forEach {
@@ -201,7 +172,7 @@ class Region(
         points = arrayListOf()
     }
 
-    private fun updateRegionSize() {
+    fun updateRegionSize() {
         if (subRegions.size > 0) {
             northWest = Point(subRegions.minOf { it.northWest.x }, subRegions.maxOf { it.northWest.y })
             southEast = Point(subRegions.maxOf { it.southEast.x }, subRegions.minOf { it.southEast.y })
@@ -223,21 +194,13 @@ class Region(
         points.add(point)
     }
 
-    private fun doesCoverRegion(region: Region): Boolean {
-        return region.northWest.x > northWest.x && region.northWest.x < southEast.x &&
-                region.southEast.x > northWest.x && region.southEast.x < southEast.x &&
-                region.northWest.y > southEast.y && region.northWest.y < northWest.y &&
-                region.southEast.y > southEast.y && region.southEast.y < northWest.y
-    }
-
     private fun doesCoverPoint(point: Point): Boolean {
         return point.x >= northWest.x && point.x <= southEast.x && point.y >= southEast.y && point.y <= northWest.y
     }
 
-    private fun addSubRegion(region: Region): Boolean {
+    fun addSubRegion(region: Region): Boolean {
         subRegions.add(region)
         region.parent = this
-        setIsLeaf(false)
         return true
     }
 
@@ -245,20 +208,22 @@ class Region(
         subRegions.remove(region)
     }
 
-    private fun addSideRegion(region: Region) {
-        parent?.addSubRegion(region)
-    }
-
     fun getAllSubRegions(regions: ArrayList<Region>, depth: Int = 0): ArrayList<Region> {
         regions.add(this)
         subRegions.forEach { it.getAllSubRegions(regions, depth + 1) }
-        if (isLeaf) println("number of points: ${getPoints().size}, depth: $depth") else println("number of subregions: ${getDirectSubRegions().size}, depth: $depth")
+        if (getIsLeaf()) println("number of points: ${getPoints().size}, depth: $depth") else println("number of subregions: ${getDirectSubRegions().size}, depth: $depth")
         return regions
     }
 
     fun getDirectSubRegions() = subRegions
 
     fun getPoints(): ArrayList<PointNode> = points
+
+    fun getEpicenter(): Point {
+        val x = abs(northWest.x - southEast.x) / 2
+        val y = abs(northWest.y - southEast.y) / 2
+        return Point(x, y)
+    }
 
     override fun toString(): String {
         return "[$northWest, $southEast]"

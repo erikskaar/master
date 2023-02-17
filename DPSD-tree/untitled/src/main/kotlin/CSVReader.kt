@@ -11,7 +11,7 @@ object CSVReader {
         val pointNodes = arrayListOf<PointNode>()
         var counter = 0
         var lineCounter = 0
-        val MAX_LINES = 20
+        val MAX_LINES = 500
         csvReader().open(f) {
             println("Reading file")
             val fileSizePercent = f.readLines().size / 99
@@ -57,9 +57,7 @@ object CSVReader {
         }
     }
 
-
     private fun addDataNodesToTrajectories(dataNodes: ArrayList<DataNode>): ArrayList<Trajectory> {
-
         val trajectories = arrayListOf<Trajectory>()
         var previousTrajectoryId = ""
         var previousTrajectory: Trajectory? = null
